@@ -9,6 +9,12 @@ def set_path(path):
     global PANDOC_PATH
     PANDOC_PATH = path
 
+CWD_PATH = '.'
+
+def set_cwd(path):
+    global CWD_PATH
+    CWD_PATH = path
+
 class Document(object):
     """A formatted document."""
     INPUT_FORMATS = (
@@ -79,7 +85,8 @@ class Document(object):
         p = subprocess.Popen(
                 subprocess_arguments,
                 stdin=subprocess.PIPE, 
-                stdout=subprocess.PIPE
+                stdout=subprocess.PIPE,
+                cwd=CWD_PATH
         )
         return p.communicate(self._content)[0]
 
@@ -88,17 +95,25 @@ class Document(object):
         '''handles pdf and epub format. 
         Inpute: output_filename should have the proper extension.
         Output: The name of the file created, or an IOError if failed'''
-        temp_file = NamedTemporaryFile(mode="w", suffix=".md", delete=False)
+        temp_file = NamedTemporaryFile(mode="w",
+                                       suffix=".md",
+                                       dir=CWD_PATH,
+                                       delete=False)
         temp_file.write(self._content)
         temp_file.close()
 
-        subprocess_arguments = [PANDOC_PATH, temp_file.name, '-o %s' % output_filename]
+        subprocess_arguments = [PANDOC_PATH, temp_file.name, '--output=%s' % output_filename]
         subprocess_arguments.extend(self.arguments)      
         cmd = " ".join(subprocess_arguments) 
 
-        fin = os.popen(cmd)
-        msg = fin.read()
-        fin.close()
+        p = subprocess.Popen(
+                subprocess_arguments,
+                stdin=subprocess.PIPE, 
+                stdout=subprocess.PIPE,
+                cwd=CWD_PATH
+        )
+
+        msg = p.communicate(self._content)[0]
         if msg:
             print "Pandoc message:", msg
         
