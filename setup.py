@@ -4,7 +4,7 @@
 import os
 import sys
 
-from setuptools import setup
+from distutils.core import setup
 
 
 def publish():
