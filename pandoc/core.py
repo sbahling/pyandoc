@@ -27,7 +27,7 @@ class Document(object):
 
     # removed pdf and epub which cannot be handled by stdout
     OUTPUT_FORMATS = (
-        'native', 'html', 'html+lhs', 's5', 'slidy',
+        'native', 'html', 'html+lhs', 'html5', 's5', 'slidy',
         'docbook', 'opendocument', 'odt',
         'latex', 'latex+lhs', 'context', 'texinfo',
         'man', 'markdown', 'markdown+lhs', 'plain',
